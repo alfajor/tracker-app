@@ -1,0 +1,35 @@
+{
+  "name": "tracking-app",
+  "version": "1.0.0",
+  "description": "",
+  "browserslist": [
+    "last 7 versions",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "main": "src/index.jsx",
+  "proxy": "http://localhost:4000",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start-server": "nodemon server.js --watch *",
+    "start-front": "react-scripts start",
+    "start": "concurrently \"npm run start-server\" \"npm run start-front\" --kill-others --kill-others-on-fail"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "knex": "^2.4.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "styled-components": "^5.3.10"
+  },
+  "devDependencies": {
+    "concurrently": "^8.0.1",
+    "nodemon": "^2.0.22",
+    "react-scripts": "^5.0.1",
+    "sqlite3": "^5.1.6"
+  }
+}
