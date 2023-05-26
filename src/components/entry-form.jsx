@@ -34,13 +34,15 @@ const EntryForm = () => {
     
     return (
         <>
-            <h1>Job Tracker</h1>
+            <TitleWrapper>
+                <h1>Job Tracker</h1>
+            </TitleWrapper>
             <StyledForm>
                 <input type="text" placeholder="title" value={title} onChange={(e) => setTitle(e.currentTarget.value)} />
                 <input type="text" placeholder="company" value={company} onChange={(e) => setCompany(e.currentTarget.value)} />
                 <input type="text" placeholder="status" value={status} onChange={(e) => setStatus(e.currentTarget.value)} />
 
-                <Button type={'submit'} buttonText={'Submit'} backgroundColor={'#ecd150'} onClick={formSubmitHandler} />
+                <Button type={'submit'} buttonText={'Add'} backgroundColor={'#ecd150'} onClick={formSubmitHandler} />
             </StyledForm>
 
             <EntryListing allEntries={entryState} />
@@ -48,16 +50,28 @@ const EntryForm = () => {
     )
 }
 
+const TitleWrapper = styled.div`
+    text-align: center;
+`;
+
 const StyledForm = styled.form`
     display: flex;
     justify-content: center;
     padding: 1em;
+
+    @media screen and (max-width: 768px) {
+        flex-flow: column;
+    }
 
     input {
         padding: .9em;
         margin-left: 1em;
         border: 1px solid #eee;
         border-radius: 2px;
+
+        @media screen and (max-width: 768px) {
+            margin-bottom: 1em;
+        }
     }
 `;
 

@@ -13,10 +13,9 @@ const EntryListing = ({allEntries}) => {
 
     const updateEntryHandler = (id) => {
         updateEntry(id, updatedField);
-        setUpdatedField('')
     }
 
-    const visibilityHandler = (id) => {
+    const fieldVisibilityHandler = (id) => {
         const newSelected = new Set(selected);
         !newSelected.has(id) ? newSelected.add(id) : newSelected.delete(id);
 
@@ -26,9 +25,10 @@ const EntryListing = ({allEntries}) => {
     return (
         <>
             <ResultsContainer>
+                <p>{allEntries.length} {allEntries.length === 0 || allEntries.length >= 2 ? 'jobs' : 'job'} tracked</p>
                 <LabelsWrapper>
-                    <p><strong>Title:</strong></p>
-                    <p><strong>Organization:</strong></p>
+                    <p><strong>Role:</strong></p>
+                    <p><strong>Company:</strong></p>
                     <p><strong>Status:</strong></p>
                 </LabelsWrapper>
                 {allEntries.map((entry, idx) => {
@@ -41,7 +41,7 @@ const EntryListing = ({allEntries}) => {
                             </EntriesWrapper>                   
 
                             <OperationsWrapper>
-                                <sub onClick={() => visibilityHandler(entry.id)}>Update status?</sub> 
+                                <sub onClick={() => fieldVisibilityHandler(entry.id)}>Update status?</sub> 
                                     <UpdateWrapper isVisible={selected.has(entry.id)}>        
                                         <input type="text" placeholder="new status" onChange={(e) => setUpdatedField(e.currentTarget.value)} />
                                         <Button type={'button'} buttonText={'Update'} backgroundColor={'#ecd150'} onClick={() => updateEntryHandler(entry.id)} />
@@ -59,18 +59,21 @@ const EntryListing = ({allEntries}) => {
 const ResultsContainer = styled.div`
     display: flex;
     flex-flow: column;
-    justify-content: center;
+    margin-left: 5%;
+    margin-right: 5%;
 `;
 
 const LabelsWrapper = styled.div`
     display: grid;
     grid-template-columns: repeat(3, 1fr);
+    text-align: center;
 `;
 
 const EntriesWrapper = styled.div`
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     border-top: 1px solid #eeee;
+    text-align: center;
 `;
 
 const OperationsWrapper = styled.div`
