@@ -58,6 +58,7 @@ const StyledForm = styled.form`
     display: flex;
     justify-content: center;
     padding: 1em;
+    border-bottom: 1px solid #eee;
 
     @media screen and (max-width: 768px) {
         flex-flow: column;

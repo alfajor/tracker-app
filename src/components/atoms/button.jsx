@@ -9,7 +9,7 @@ const Button = ({backgroundColor, textColor, buttonText, buttonType, onClick}) =
 }
 
 const StyledButton = styled.button`
-    border: 1px solid #ecd150;
+    border: 1px solid ${(props) => props.backgroundColor};
     border-radius: 2px;
     background-color: ${(props) => props.backgroundColor ? props.backgroundColor : 'transparent'};
     color: ${(props) => props.textColor ? props.textColor : '#222'};
