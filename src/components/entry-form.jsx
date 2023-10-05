@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getAllEntries, createEntry } from '../utils/query-handler';
 import EntryListing from './entry-listing';
 import Button from './atoms/button';
@@ -8,30 +8,35 @@ const EntryForm = () => {
     const [title, setTitle] = useState('');
     const [company, setCompany] = useState('');
     const [status, setStatus] = useState('');
-
     const [entryState, setEntryState] = useState([]);
-
-    const formSubmitHandler = (e) => {
-        e.preventDefault();
-        if(title.length > 0 && company.length > 0 && status.length > 0) {
-            createEntry(title, company, status)
-        }
-        // reset fields
-        setTitle('')
-        setCompany('')
-        setStatus('')
-    }
 
     const allEntryHandler = async () => {
         const entries = await getAllEntries();
         return entries;
     }
     const allEntries = allEntryHandler();
-   
-    allEntries.then((entry) => {
-       setEntryState(entry)
-    });
+
+    const formSubmitHandler = (e) => {
+        e.preventDefault();
     
+        if(title.length > 0 && company.length > 0 && status.length > 0) {
+            createEntry(title, company, status);
+        }
+
+        const newEntries = entryState.concat({title, company, status});
+        setEntryState(newEntries);
+
+        // reset fields
+        setTitle('');
+        setCompany('');
+        setStatus('');
+    }
+   
+    // show every entry
+    useEffect(() => {   
+        allEntries.then((entry) => setEntryState(entry));
+    }, []);
+
     return (
         <>
             <TitleWrapper>
@@ -59,6 +64,9 @@ const StyledForm = styled.form`
     justify-content: center;
     padding: 1em;
     border-bottom: 1px solid #eee;
+    background-color: #fff;
+    position: sticky;
+    top: 0;
 
     @media screen and (max-width: 768px) {
         flex-flow: column;

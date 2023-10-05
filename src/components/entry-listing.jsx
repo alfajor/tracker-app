@@ -5,20 +5,31 @@ import styled from 'styled-components';
 
 const EntryListing = ({allEntries}) => {
     const [updatedField, setUpdatedField] = useState('');
-    const [selected, setSelected] = useState(new Set())
-    const [dropdownSelected, setDropdownSelected] = useState('')
+    const [selected, setSelected] = useState(new Set());
+    const [dropdownSelected, setDropdownSelected] = useState('');
     const [reveal, setReveal] = useState(false);
 
     const [sortedEntries, setSortedEntries] = useState([]);
+    const [entryCount, setEntryCount] = useState(0);
+    const [updatedEntryStatus, setUpdatedEntryStatus] = useState('');
 
+    // crud
     const removeEntryHandler = (id) => {
         deleteEntry(id);
+        setEntryCount(sortedEntries.length - 1);
+
+        const filterSort = sortedEntries.filter((item) => item.id !== id);
+        setSortedEntries(filterSort);
     }
 
     const updateEntryHandler = (id) => {
-        updateEntry(id, updatedField);
+        updateEntry(id, updatedField); 
+        setUpdatedField(updatedField);
+
+        setUpdatedEntryStatus(updatedField);
     }
 
+    // update field toggle
     const fieldVisibilityHandler = (id) => {
         const newSelected = new Set(selected);
         !newSelected.has(id) ? newSelected.add(id) : newSelected.delete(id);
@@ -28,30 +39,41 @@ const EntryListing = ({allEntries}) => {
 
     // sorting
     const alphabeticalSort = () => {
-        const sorted = allEntries.sort((a, b) => a.company.localeCompare(b.company))
-        setSortedEntries(sorted)
+        const sorted = [...allEntries].sort((a, b) => a.company.localeCompare(b.company));
+        setSortedEntries(sorted);
     }
 
     const statusSort = (target, statusText) => {
-        const statusSorted = allEntries.filter((el) => el.status === statusText) 
-        setSortedEntries(statusSorted)
-        setDropdownSelected(target)
+        const statusSorted = [...allEntries].filter((el) => el.status === statusText);
+        setSortedEntries(statusSorted);
+        setDropdownSelected(target);
     }
 
     const recentSort = () => {
-        const dateSort = allEntries.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-        setSortedEntries(dateSort)
+        const dateSort = [...allEntries].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        setSortedEntries(dateSort);
     }
-    
-    // TODO: fix initial unsorted items render
+
+    // maintain current updated status
+    const setCurrentStatus = (entry) => {
+        if(selected.has(entry.id) && updatedField != '') {
+            entry.status = updatedEntryStatus;
+        }
+        return entry.status;
+    }
+
     useEffect(() => {
-        setSortedEntries(allEntries)
-    }, []) // allEntries
+        setSortedEntries(allEntries);
+        setEntryCount(allEntries.length);
+    }, [allEntries]);
 
     return (
         <>
             <ResultsContainer>
-                <p>{allEntries.length} {allEntries.length === 0 || allEntries.length >= 2 ? 'jobs' : 'job'} tracked</p>
+                <EntryCounter>
+                    <p>{entryCount} {entryCount === 0 || entryCount >= 2 ? 'jobs' : 'job'} tracked</p>
+                </EntryCounter>
+                
                 <SortingWrapper>
                     <Button type={'button'} buttonText={'Sort (A-Z)'} backgroundColor={'green'} textColor={'#fff'} onClick={alphabeticalSort} />
                     <Button type={'button'} buttonText={'Sort (Status)'} backgroundColor={'orange'} textColor={'#fff'} onClick={() => setReveal(!reveal)} />
@@ -65,15 +87,20 @@ const EntryListing = ({allEntries}) => {
                 <LabelsWrapper>
                     <p><strong>Role:</strong></p>
                     <p><strong>Company:</strong></p>
+                    <p><strong>Date:</strong></p>
                     <p><strong>Status:</strong></p>
                 </LabelsWrapper>
+                
                 {sortedEntries.map((entry, idx) => {
+                    const currentStatus = setCurrentStatus(entry);
+
                     return (
                         <div key={idx}>
                             <EntriesWrapper>
                                 <p>{entry.title}</p>
                                 <p>{entry.company}</p>
-                                <p>{entry.status}</p>     
+                                <p>{entry.created_at ? entry.created_at.slice(0, 11) : null}</p>
+                                <p>{currentStatus}</p>     
                             </EntriesWrapper>               
 
                             <OperationsWrapper>
@@ -85,7 +112,7 @@ const EntryListing = ({allEntries}) => {
                                 <Button type={'button'} buttonText={'Remove'} backgroundColor={'#ff4500'} textColor={'#fff'} onClick={() => removeEntryHandler(entry.id)} />
                             </OperationsWrapper>                                   
                         </div>
-                    )
+                    );
                 })}
             </ResultsContainer>
         </>
@@ -99,15 +126,20 @@ const ResultsContainer = styled.div`
     margin-right: 5%;
 `;
 
+const EntryCounter = styled.div`
+    margin-left: .8em;
+    font-weight: 600;
+`;
+
 const LabelsWrapper = styled.div`
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     text-align: center;
 `;
 
 const EntriesWrapper = styled.div`
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     border-top: 1px solid #eeee;
     text-align: center;
 `;
